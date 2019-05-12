@@ -2,9 +2,7 @@ from PIL import Image
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-# import requests
-# res = requests.get('./up_mother/Pathway/up_mother_map/map00010.html')
-# res.encoding = 'utf-8'
+import re
 
 def getrectpos(rect:str):
     rect=rect.strip()
@@ -16,10 +14,13 @@ maps=data.map
 rects=data.map.select("area[onmouseover]")
 rectlist=[]
 for rect in rects:
-    rectlist.append(getrectpos(rect["coords"]))
+    rectpos=getrectpos(rect["coords"])
+    rectlist.append(rectpos)
     # print(rect["coords"])
-    # item=BeautifulSoup(rect["onmouseover"][22:-3])
-    # print(item.li.li.text)
+    item=BeautifulSoup(rect["onmouseover"][22:-3],'html.parser')
+    KO=item.li.li.text.strip().split(":")[0]
+    print(KO)
+    print(re.findall("Aurat\d*",item.li.li.text))
 img=Image.open('./up_mother/Pathway/up_mother_map/map00010.png')
 plt.figure("dog")
 print(img.size)
