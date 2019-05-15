@@ -18,7 +18,7 @@ PScolors=[P,P,M,P,P,M,P,P]
 MPScolors=[P,M,M,P,P,M,M,P]
 
 
-pathway = "map04010"
+pathway = "map04810"
 data_M = './up_mother/Pathway/up_mother_map/{0}.html'.format(pathway)
 data_P = './up_father/Pathway/up_father_map/{0}.html'.format(pathway)
 data_S = "./shift/Pathway/dominance_map/{0}.html".format(pathway)
@@ -139,4 +139,4 @@ addchemericrect(Alldict,currentAxis,MP,MPcolors)
 addchemericrect(Alldict,currentAxis,PS,PScolors)
 addchemericrect(Alldict,currentAxis,MS,MScolors)
 addchemericrect(Alldict,currentAxis,MPS,MPScolors)
-plt.savefig("{0}_all.png".format(pathway), dpi=300)
+plt.savefig("{0}_v2.png".format(pathway), dpi=300)
