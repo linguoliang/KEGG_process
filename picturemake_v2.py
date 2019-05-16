@@ -10,7 +10,15 @@ M = "#DA7736"
 P = "#2D9BCE"
 S = 'yellow'
 both = 'r'
-# 定义颜色
+
+# 定义颜色，边框位置如下
+#   1   2
+#   ---|---
+# 5|   |   |7
+# —————|——————
+# 6|   |   |8
+#   ---|---
+#    3   4
 Scolors=[M,P,M,P,M,M,P,P]
 MPcolors=[P,P,M,M,P,M,P,M]
 MScolors=[M,M,M,P,M,M,M,P]
@@ -139,4 +147,4 @@ addchemericrect(Alldict,currentAxis,MP,MPcolors)
 addchemericrect(Alldict,currentAxis,PS,PScolors)
 addchemericrect(Alldict,currentAxis,MS,MScolors)
 addchemericrect(Alldict,currentAxis,MPS,MPScolors)
-plt.savefig("{0}_all.png".format(pathway), dpi=300)
+plt.savefig("{0}_v2.png".format(pathway), dpi=300)
