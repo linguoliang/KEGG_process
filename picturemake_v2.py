@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import re
-import sys
 
 #
 M = "#DA7736"
@@ -16,9 +15,13 @@ MPcolors=[P,P,M,M,P,M,P,M]
 MScolors=[M,M,M,P,M,M,M,P]
 PScolors=[P,P,M,P,P,M,P,P]
 MPScolors=[P,M,M,P,P,M,M,P]
+# for fig legend
+figlegend={"Shift":Scolors,"M and P":MPcolors,
+           "M and Shift":MScolors,"P and Shift":PScolors,
+           "M, P and Shift":MPScolors}
 
 
-pathway = "map04810"
+pathway = "map04010"
 data_M = './up_mother/Pathway/up_mother_map/{0}.html'.format(pathway)
 data_P = './up_father/Pathway/up_father_map/{0}.html'.format(pathway)
 data_S = "./shift/Pathway/dominance_map/{0}.html".format(pathway)
@@ -68,22 +71,17 @@ for key,value in M_KO.items():
         Alldict[key]=value
     elif len(value)>len(Alldict[key]):
         Alldict[key]=value
-    # if key=="K04459":
-    #     print(M_KO[key])
 for key,value in P_KO.items():
     if key not in Alldict:
         Alldict[key]=value
     elif len(value)>len(Alldict[key]):
         Alldict[key]=value
-    # if key=="K04459":
-    #     print(P_KO[key])
+
 for key,value in S_KO.items():
     if key not in Alldict:
         Alldict[key]=value
     elif len(value)>len(Alldict[key]):
         Alldict[key]=value
-    # if key=="K04459":
-    #     print(S_KO[key])
 
 img = Image.open(img_sc)
 Mkoset = set(M_KO.keys())
@@ -109,6 +107,17 @@ plt.imshow(img)
 currentAxis = plt.gca()
 plt.axis('off')
 
+#
+def makechemericrect(rect,colors,dx=1.8):
+    plt.hlines(rect[1],rect[0]-dx,rect[2]-(rect[2]-rect[0])/2,colors[0],linewidth=1)
+    plt.hlines(rect[1],rect[0]+(rect[2]-rect[0])/2,rect[2]+dx,colors[1],linewidth=1)
+    plt.hlines(rect[3],rect[0]-dx,rect[2]-(rect[2]-rect[0])/2,colors[2],linewidth=1)
+    plt.hlines(rect[3],rect[0]+(rect[2]-rect[0])/2,rect[2]+dx,colors[3],linewidth=1)
+    plt.vlines(rect[0],rect[1]-dx,rect[3]-(rect[3]-rect[1])/2,colors[4],linewidth=1)
+    plt.vlines(rect[0],rect[1]+(rect[3]-rect[1])/2,rect[3]+dx,colors[5],linewidth=1)
+    plt.vlines(rect[2],rect[1]-dx,rect[3]-(rect[3]-rect[1])/2,colors[6],linewidth=1)
+    plt.vlines(rect[2],rect[1]+(rect[3]-rect[1])/2,rect[3]+dx,colors[7],linewidth=1)
+
 #for Msingle and Psingle
 def addrect(alldict,currentAxis,kos,color):
     for ko in kos:
@@ -123,14 +132,29 @@ def addchemericrect(alldict,currentAxis,kos,colors):
         # if ko=="K04459":
         #     print(alldict[ko])
         for rectgene in alldict[ko]:
-            plt.hlines(rectgene[0][1],rectgene[0][0]-1,rectgene[0][2]-(rectgene[0][2]-rectgene[0][0])/2,colors[0],linewidth=1)
-            plt.hlines(rectgene[0][1],rectgene[0][0]+(rectgene[0][2]-rectgene[0][0])/2,rectgene[0][2]+1,colors[1],linewidth=1)
-            plt.hlines(rectgene[0][3],rectgene[0][0]-1,rectgene[0][2]-(rectgene[0][2]-rectgene[0][0])/2,colors[2],linewidth=1)
-            plt.hlines(rectgene[0][3],rectgene[0][0]+(rectgene[0][2]-rectgene[0][0])/2,rectgene[0][2]+1,colors[3],linewidth=1)
-            plt.vlines(rectgene[0][0],rectgene[0][1]-1,rectgene[0][3]-8,colors[4],linewidth=1)
-            plt.vlines(rectgene[0][0],rectgene[0][1]+9,rectgene[0][3]+1,colors[5],linewidth=1)
-            plt.vlines(rectgene[0][2],rectgene[0][1]-1,rectgene[0][3]-8,colors[6],linewidth=1)
-            plt.vlines(rectgene[0][2],rectgene[0][1]+9,rectgene[0][3]+1,colors[7],linewidth=1)
+            makechemericrect(rectgene[0],colors)
+
+def addfiglegend(img,currentAxis,dx=300,dy=17):
+    width=46
+    higth=17
+    posx=img.size[0]-dx
+    posxs=posx+width+10
+    posy=dy
+    posys=posy+higth
+    # print(img.size[0])
+    Mrect = patches.Rectangle((posx,posy), width, higth, linewidth=1,
+                              edgecolor=M, facecolor='none')
+    plt.text(posxs,posys,"M",fontsize=5)
+    Prect= patches.Rectangle((posx,posy+2*higth), width, higth, linewidth=1,
+                             edgecolor=P, facecolor='none')
+    plt.text(posxs,posys+2*higth,"P",fontsize=5)
+    currentAxis.add_patch(Mrect)
+    currentAxis.add_patch(Prect)
+    i=4
+    for key in figlegend:
+        makechemericrect([posx,posy+i*higth,posx+width,posy+(i+1)*higth],figlegend[key])
+        plt.text(posxs,posys+i*higth,key,fontsize=5)
+        i+=2
 
 addrect(Alldict,currentAxis,Msingle,M)
 addrect(Alldict,currentAxis,Psingle,P)
@@ -139,4 +163,5 @@ addchemericrect(Alldict,currentAxis,MP,MPcolors)
 addchemericrect(Alldict,currentAxis,PS,PScolors)
 addchemericrect(Alldict,currentAxis,MS,MScolors)
 addchemericrect(Alldict,currentAxis,MPS,MPScolors)
-plt.savefig("{0}_v2.png".format(pathway), dpi=300)
+addfiglegend(img,currentAxis,200)
+plt.savefig("{0}_v3.png".format(pathway), dpi=300)
